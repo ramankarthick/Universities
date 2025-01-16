@@ -1,10 +1,17 @@
 package com.app.universities.service
 
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
+@Module
+@InstallIn(SingletonComponent::class)
 object GetUniversitiesService {
     private const val BASE_URL = "http://universities.hipolabs.com/"
 
@@ -14,13 +21,20 @@ object GetUniversitiesService {
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    val api: UniversityApiService by lazy {
-        Retrofit.Builder()
+    @Provides
+    @Singleton
+    fun provideRetrofit(): Retrofit {
+        return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(UniversityApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetUniversitiesService(retrofit: Retrofit): UniversityApiService {
+        return retrofit.create(UniversityApiService::class.java)
     }
 
 }

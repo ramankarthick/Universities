@@ -14,38 +14,27 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.universities.model.UniversitiesViewModel
 import com.app.universities.repository.Universities
-import com.app.universities.repository.UniversityRepository
-import com.app.universities.repository.UniversityViewModelFactory
-import com.app.universities.service.GetUniversitiesService
 import com.app.universities.ui.theme.UniversitiesTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val viewModel: UniversitiesViewModel = hiltViewModel()
             UniversitiesTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val repository = UniversityRepository(GetUniversitiesService.api)
-                    val viewModelFactory = UniversityViewModelFactory(repository)
-                    val viewModel = viewModel<UniversitiesViewModel>(factory = viewModelFactory)
-
-                    LaunchedEffect(Unit) {
-                        viewModel.getUniversities() // Fetch data when the screen is created
-                    }
-
                     UniversityListScreen(viewModel)
                 }
             }
@@ -71,7 +60,7 @@ fun GreetingPreview() {
 
 @Composable
 fun UniversityListScreen(viewModel: UniversitiesViewModel) {
-    val universities by viewModel.universities.observeAsState(emptyList())
+    val universities = viewModel.universities
     Column {
         Spacer(modifier = Modifier.height(40.dp))
         Text(text = "Universities", modifier = Modifier.padding(16.dp), fontWeight = FontWeight.Bold, style = TextStyle(fontSize = 30.sp))

@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("dagger.hilt.android.plugin")
+    id("kotlin-kapt")
 }
 
 android {
@@ -82,4 +84,12 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.7.2")
 // Needed for createComposeRule(), but not for createAndroidComposeRule<YourActivity>():
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.2")
+
+    // Dagger Hilt for Dependency Injection
+    implementation ("com.google.dagger:hilt-android:2.55")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
+    kapt("com.google.dagger:hilt-compiler:2.55")
+}
+kapt {
+    correctErrorTypes = true
 }
